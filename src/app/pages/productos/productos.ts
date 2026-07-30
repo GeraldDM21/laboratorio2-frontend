@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIf, NgFor, CurrencyPipe } from '@angular/common';
 import { ProductoService } from '../../services/producto';
@@ -13,25 +13,27 @@ import { AuthService } from '../../services/auth';
 export class Productos implements OnInit {
   productos: any[] = [];
   totalPages = 0;
-  currentPage = 0;
+  currentPage = 1;
   error = '';
 
   constructor(
     private productoService: ProductoService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadProductos();
   }
 
-  loadProductos(page: number = 0): void {
+  loadProductos(page: number = 1): void {
     this.productoService.getAll(page).subscribe({
       next: (res) => {
-        this.productos = res.content;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.number;
+        this.productos = res.data ?? [];
+        this.totalPages = res.meta?.totalPages ?? 0;
+        this.currentPage = res.meta?.pageNumber ?? 1;
+        this.cdr.detectChanges();
       },
       error: () => { this.error = 'Error al cargar productos'; }
     });

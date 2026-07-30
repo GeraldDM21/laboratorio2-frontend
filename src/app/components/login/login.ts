@@ -21,7 +21,7 @@ export class Login {
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
         this.authService.saveToken(res.token);
-        this.authService.saveUser(res.user);
+        this.authService.saveUser(res.authUser);
         this.router.navigate(['/categorias']);
       },
       error: () => {

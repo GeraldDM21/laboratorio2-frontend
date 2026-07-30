@@ -11,7 +11,7 @@ import { UsuarioService } from '../../services/usuario';
 export class Usuarios implements OnInit {
   usuarios: any[] = [];
   totalPages = 0;
-  currentPage = 0;
+  currentPage = 1;
   error = '';
 
   constructor(private usuarioService: UsuarioService) {}
@@ -20,12 +20,12 @@ export class Usuarios implements OnInit {
     this.loadUsuarios();
   }
 
-  loadUsuarios(page: number = 0): void {
+  loadUsuarios(page: number = 1): void {
     this.usuarioService.getAll(page).subscribe({
       next: (res) => {
-        this.usuarios = res.content;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.number;
+        this.usuarios = res.data;
+        this.totalPages = res.meta.totalPages;
+        this.currentPage = res.meta.pageNumber;
       },
       error: () => { this.error = 'Error al cargar usuarios'; }
     });

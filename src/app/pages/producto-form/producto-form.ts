@@ -12,7 +12,7 @@ import { CategoriaService } from '../../services/categoria';
   styleUrl: './producto-form.scss'
 })
 export class ProductoForm implements OnInit {
-  producto = { nombre: '', descripcion: '', precio: 0, stock: 0, categoriaId: null as number | null };
+  producto = { nombre: '', descripcion: '', precio: 0, cantidadStock: 0, categoria: { id: null as number | null } };
   categorias: any[] = [];
   id: number | null = null;
   isEdit = false;
@@ -33,11 +33,11 @@ export class ProductoForm implements OnInit {
       this.productoService.getById(this.id).subscribe({
         next: (res) => {
           this.producto = {
-            nombre: res.nombre,
-            descripcion: res.descripcion,
-            precio: res.precio,
-            stock: res.stock,
-            categoriaId: res.categoria?.id ?? null
+            nombre: res.data.nombre,
+            descripcion: res.data.descripcion,
+            precio: res.data.precio,
+            cantidadStock: res.data.cantidadStock,
+            categoria: { id: res.data.categoria?.id ?? null }
           };
         },
         error: () => { this.error = 'Error al cargar producto'; }
@@ -46,8 +46,8 @@ export class ProductoForm implements OnInit {
   }
 
   loadCategorias(): void {
-    this.categoriaService.getAll(0, 100).subscribe({
-      next: (res) => { this.categorias = res.content; },
+    this.categoriaService.getAll(1, 100).subscribe({
+      next: (res) => { this.categorias = res.data; },
       error: () => { this.error = 'Error al cargar categorías'; }
     });
   }

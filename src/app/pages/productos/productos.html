@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Productos</h2>
-    <a routerLink="/productos/new" class="btn btn-primary">+ Nuevo Producto</a>
+    <a routerLink="/productos/new" class="btn btn-primary" *ngIf="authService.isSuperAdmin()">+ Nuevo Producto</a>
   </div>
 
   <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
@@ -22,11 +22,13 @@
         <td>{{ prod.id }}</td>
         <td>{{ prod.nombre }}</td>
         <td>{{ prod.precio | currency:'CRC':'symbol':'1.2-2' }}</td>
-        <td>{{ prod.stock }}</td>
+        <td>{{ prod.cantidadStock }}</td>
         <td>{{ prod.categoria?.nombre }}</td>
         <td>
-          <a [routerLink]="['/productos/edit', prod.id]" class="btn btn-sm btn-warning me-2">Editar</a>
-          <button class="btn btn-sm btn-danger" (click)="delete(prod.id)">Eliminar</button>
+          <ng-container *ngIf="authService.isSuperAdmin()">
+            <a [routerLink]="['/productos/edit', prod.id]" class="btn btn-sm btn-warning me-2">Editar</a>
+            <button class="btn btn-sm btn-danger" (click)="delete(prod.id)">Eliminar</button>
+          </ng-container>
         </td>
       </tr>
     </tbody>
@@ -34,14 +36,14 @@
 
   <nav *ngIf="totalPages > 1">
     <ul class="pagination">
-      <li class="page-item" [class.disabled]="currentPage === 0">
+      <li class="page-item" [class.disabled]="currentPage === 1">
         <button class="page-link" (click)="loadProductos(currentPage - 1)">Anterior</button>
       </li>
       <li class="page-item" *ngFor="let p of [].constructor(totalPages); let i = index"
-          [class.active]="i === currentPage">
-        <button class="page-link" (click)="loadProductos(i)">{{ i + 1 }}</button>
+          [class.active]="i + 1 === currentPage">
+        <button class="page-link" (click)="loadProductos(i + 1)">{{ i + 1 }}</button>
       </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
         <button class="page-link" (click)="loadProductos(currentPage + 1)">Siguiente</button>
       </li>
     </ul>

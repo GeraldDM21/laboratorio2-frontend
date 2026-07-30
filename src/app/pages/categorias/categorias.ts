@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
 import { CategoriaService } from '../../services/categoria';
@@ -13,25 +13,27 @@ import { AuthService } from '../../services/auth';
 export class Categorias implements OnInit {
   categorias: any[] = [];
   totalPages = 0;
-  currentPage = 0;
+  currentPage = 1;
   error = '';
 
   constructor(
     private categoriaService: CategoriaService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadCategorias();
   }
 
-  loadCategorias(page: number = 0): void {
+  loadCategorias(page: number = 1): void {
     this.categoriaService.getAll(page).subscribe({
       next: (res) => {
-        this.categorias = res.content;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.number;
+        this.categorias = res.data ?? [];
+        this.totalPages = res.meta?.totalPages ?? 0;
+        this.currentPage = res.meta?.pageNumber ?? 1;
+        this.cdr.detectChanges();
       },
       error: () => { this.error = 'Error al cargar categorías'; }
     });
