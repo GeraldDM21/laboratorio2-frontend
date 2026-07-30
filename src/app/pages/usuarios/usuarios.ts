@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor } from '@angular/common';
 import { UsuarioService } from '../../services/usuario';
 
@@ -14,7 +14,7 @@ export class Usuarios implements OnInit {
   currentPage = 1;
   error = '';
 
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(private usuarioService: UsuarioService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadUsuarios();
@@ -23,9 +23,10 @@ export class Usuarios implements OnInit {
   loadUsuarios(page: number = 1): void {
     this.usuarioService.getAll(page).subscribe({
       next: (res) => {
-        this.usuarios = res.data;
-        this.totalPages = res.meta.totalPages;
-        this.currentPage = res.meta.pageNumber;
+        this.usuarios = res.data ?? [];
+        this.totalPages = res.meta?.totalPages ?? 0;
+        this.currentPage = res.meta?.pageNumber ?? 1;
+        this.cdr.detectChanges();
       },
       error: () => { this.error = 'Error al cargar usuarios'; }
     });

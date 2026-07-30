@@ -43,7 +43,7 @@ export class Categorias implements OnInit {
     if (confirm('¿Eliminar esta categoría?')) {
       this.categoriaService.delete(id).subscribe({
         next: () => this.loadCategorias(this.currentPage),
-        error: () => { this.error = 'Error al eliminar'; }
+        error: () => { this.error = 'No se puede eliminar: la categoría tiene productos asociados.'; this.cdr.detectChanges(); }
       });
     }
   }

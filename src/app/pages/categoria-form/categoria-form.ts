@@ -28,7 +28,7 @@ export class CategoriaForm implements OnInit {
     if (this.id) {
       this.isEdit = true;
       this.categoriaService.getById(this.id).subscribe({
-        next: (res) => { this.categoria = res; },
+        next: (res) => { this.categoria = res.data; },
         error: () => { this.error = 'Error al cargar categoría'; }
       });
     }
